@@ -1,21 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if title %}
-     <title>{{title}}</title>
-    {% else %}
-        <title>Pitch app</title>
-    {% endif %}
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block content %}
     <h1>home page</h1>
     {% for pitch in pitches %}
         <h1>{{pitch.description}}</h1>
         <p>By {{pitch.user}}</p>
         <p>Time posted: {{pitch.time_created}}</p>
     {% endfor %}
-</body>
-</html>
+{% endblock content%}
