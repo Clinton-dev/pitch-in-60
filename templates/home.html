@@ -3,8 +3,15 @@
 {% block content %}
     <h1>home page</h1>
     {% for pitch in pitches %}
-        <h1>{{pitch.description}}</h1>
-        <p>By {{pitch.user}}</p>
-        <p>Time posted: {{pitch.time_created}}</p>
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ pitch.user }}</a>
+              <small class="text-muted">{{ pitch.time_created }}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ pitch.description | truncate(25) }}</a></h2>
+            <p class="article-content">{{ pitch.description }}</p>
+          </div>
+        </article>
     {% endfor %}
 {% endblock content%}
