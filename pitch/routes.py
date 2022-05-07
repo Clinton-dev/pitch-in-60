@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect
-from pitch import app
+from pitch import app, db, bcrypt
 from pitch.forms import RegistrationForm, LoginForm
 from pitch.models import User, Pitch
 
@@ -25,8 +25,12 @@ def index():
 def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account has been created for {form.username.data}!','success')
-        return redirect(url_for('index'))
+        hashed_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, password=hashed_pass, email=form.email.data)
+        db.session.add(user)
+        db.session.commit()
+        flash(f'Your account is ready you can proceed to login','success')
+        return redirect(url_for('login'))
 
     return render_template("signup.html", title="Signup", form=form)
 
