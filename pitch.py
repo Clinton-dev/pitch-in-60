@@ -23,9 +23,9 @@ def index():
     title ="Pitch in a min"
     return render_template("home.html", pitches=pitches, title=title)
 
-@app.route("/signup")
+@app.route("/signup", methods=['POST','GET'])
 def signup():
-    form = LoginForm()
+    form = RegistrationForm()
     return render_template("signup.html", title="Signup", form=form)
 
 @app.route("/login")
