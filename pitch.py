@@ -32,9 +32,15 @@ def signup():
 
     return render_template("signup.html", title="Signup", form=form)
 
-@app.route("/login")
+@app.route("/login", methods=['POST','GET'])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'clinton@gmail.com' and form.password.data == 'pass':
+            flash(f'You have been logged in!','success')
+            return redirect(url_for('index'))
+        else:
+            flash(f'Login unsuccessful check password or email','danger')
     return render_template("login.html", title="Signup", form=form)
 
 
