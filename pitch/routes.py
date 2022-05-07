@@ -2,6 +2,7 @@ from flask import render_template, url_for, flash, redirect
 from pitch import app, db, bcrypt
 from pitch.forms import RegistrationForm, LoginForm
 from pitch.models import User, Pitch
+from flask_login import login_user, current_user, logout_user
 
 pitches = [
     {
@@ -23,6 +24,8 @@ def index():
 
 @app.route("/signup", methods=['POST','GET'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -36,11 +39,19 @@ def signup():
 
 @app.route("/login", methods=['POST','GET'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'clinton@gmail.com' and form.password.data == 'pass':
-            flash(f'You have been logged in!','success')
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password,form.password.data):
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('index'))
         else:
             flash(f'Login unsuccessful check password or email','danger')
-    return render_template("login.html", title="Signup", form=form)
+    return render_template("login.html", title="Login", form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect('login')
