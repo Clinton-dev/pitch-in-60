@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request, abort
 from pitch import app, db, bcrypt
 from pitch.forms import RegistrationForm, LoginForm
 from pitch.models import User, Pitch
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 pitches = [
     {
@@ -46,7 +46,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password,form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('index'))
+            next_page = request.args.get('next')
+            if not is_safe_url(next):
+                return abort(400)
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash(f'Login unsuccessful check password or email','danger')
     return render_template("login.html", title="Login", form=form)
@@ -55,3 +58,8 @@ def login():
 def logout():
     logout_user()
     return redirect('login')
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template("account.html", title="user account")
