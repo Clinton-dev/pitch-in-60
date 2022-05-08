@@ -1,5 +1,6 @@
 from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
@@ -32,6 +33,7 @@ class LoginForm(FlaskForm):
 class UpdateUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2,max=20)])
     email = StringField('Email', validators=[DataRequired(),Email()])
+    image = FileField('Update user picture', validators=[FileAllowed(['png','jpg'])])
     submit = SubmitField('Update account')
 
     def validate_username(self, username):
