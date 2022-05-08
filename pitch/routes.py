@@ -7,23 +7,11 @@ from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm, PitchForm
 from pitch.models import User, Pitch
 from flask_login import login_user, current_user, logout_user, login_required
 
-pitches = [
-    {
-        "user":"Clinton dev",
-        "description":"Its not you its me",
-        "time_created":"09:30 am"
-    },
-    {
-        "user":"Clinton dev",
-        "description":"If you are going through hell keep moving",
-        "time_created":"09:50 am"
-    }
-]
 
 @app.route("/")
 def index():
-    title ="Pitch in a min"
-    return render_template("home.html", pitches=pitches, title=title)
+    pitches = Pitch.query.all()
+    return render_template("home.html", pitches=pitches, title="Pitch in a min")
 
 @app.route("/signup", methods=['POST','GET'])
 def signup():
@@ -108,3 +96,20 @@ def new_pitch():
         flash("Pitch was successfully created", "success")
         return redirect(url_for('index'))
     return render_template("create_pitch.html", title="New pitch", form = form, legend="Create a pitch")
+
+@app.route("/pitch/<int:pitch_id>", methods=['POST','GET'])
+@login_required
+def update_pitch(pitch_id):
+    pitch = Pitch.query.get_or_404(pitch_id)
+    form = PitchForm()
+    if form.validate_on_submit():
+        pitch.title = form.title.data
+        pitch.content = form.content.data
+        db.session.commit()
+        flash('Pitch updated successfully', 'success')
+        return redirect(url_for())
+    elif request.method == 'GET':
+        form.title.data = pitch.title
+        form.content.data = pitch.content
+
+    return render_template("create_pitch.html", title="Update pitch", form = form, legend="Update a pitch")

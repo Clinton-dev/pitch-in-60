@@ -5,11 +5,11 @@
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ pitch.user }}</a>
-              <small class="text-muted">{{ pitch.time_created }}</small>
+              <a class="mr-2" href="#">{{ pitch.author.username }}</a>
+              <small class="text-muted">{{ pitch.date_posted }}</small>
             </div>
-            <h2><a class="article-title" href="#">{{ pitch.description | truncate(25) }}</a></h2>
-            <p class="article-content">{{ pitch.description }}</p>
+            <h2><a class="article-title" href="#">{{ pitch.title}}</a></h2>
+            <p class="article-content">{{ pitch.content }}</p>
           </div>
         </article>
     {% endfor %}
