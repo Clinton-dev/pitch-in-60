@@ -67,7 +67,7 @@ def save_picture(form_picture):
     pic_file_name = random_hex + f_ext
     pic_path = os.path.join(app.root_path, 'static/profile-pics', pic_file_name)
 
-    output_size = (130, 130)
+    output_size = (127, 127)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(pic_path)
@@ -96,3 +96,8 @@ def account():
     img_file = url_for('static', filename='profile-pics/' + current_user.image_file)
 
     return render_template("account.html", title="user account", image_file=img_file, form=form)
+
+@app.route("/pitch/new")
+@login_required
+def new_pitch():
+    return render_template("create_pitch.html", title="New pitch")
