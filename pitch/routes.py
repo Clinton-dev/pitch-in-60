@@ -10,7 +10,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route("/")
 def index():
-    pitches = Pitch.query.all()
+    page = request.args.get('page', 1, type=int)
+    pitches = Pitch.query.order_by(Pitch.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template("home.html", pitches=pitches, title="Pitch in a min")
 
 @app.route("/signup", methods=['POST','GET'])

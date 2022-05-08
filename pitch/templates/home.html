@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    {% for pitch in pitches %}
+    {% for pitch in pitches.items %}
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata row justify-content-start">
@@ -18,4 +18,21 @@
           </div>
         </article>
     {% endfor %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        {% for page_no in pitches.iter_pages(left_edge=1,right_edge=1, left_current=1,right_current=2)%}
+            {% if page_no %}
+              {% if pitches.page == page_no %}
+                <li class="page-item active"><a class="page-link" href="{{url_for('index', page=page_no)}}">{{page_no}}</a></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="{{url_for('index', page=page_no)}}">{{page_no}}</a></li>
+              {% endif %}
+            {% else%}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+              </li>
+            {% endif %}
+        {% endfor %}
+      </ul>
+    </nav>
 {% endblock content%}
