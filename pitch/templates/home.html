@@ -4,11 +4,16 @@
     {% for pitch in pitches %}
         <article class="media content-section">
           <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ pitch.author.username }}</a>
-              <small class="text-muted">{{ pitch.date_posted }}</small>
+            <div class="article-metadata row justify-content-start">
+              <div class="col-2">
+                <img class="rounded-circle article-img mb-2" src="{{ url_for('static', filename='profile-pics/' + pitch.author.image_file) }}" alt="{{pitch.author.username}} profile image">
+              </div>
+              <div class="col-6">
+                <p class="mr-2">By: {{ pitch.author.username }}</p>
+                <small class="text-muted">Pitched on: {{ pitch.date_posted.strftime('%Y-%m-%d') }}</small>
+              </div>
             </div>
-            <h2><a class="article-title" href="#">{{ pitch.title}}</a></h2>
+            <h2><a class="article-title" href="{{url_for('pitch', pitch_id=pitch.id)}}">{{ pitch.title}}</a></h2>
             <p class="article-content">{{ pitch.content }}</p>
           </div>
         </article>
