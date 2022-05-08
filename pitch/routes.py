@@ -61,6 +61,16 @@ def logout():
 @login_required
 def account():
     form = UpdateUserForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Account details successfully updated', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
     # img_file = {{url_for('static',filename='profile-pics/'+ current_user.image_file)}}
     img_file = url_for('static', filename='profile-pics/' + current_user.image_file)
+
     return render_template("account.html", title="user account", image_file=img_file, form=form)
