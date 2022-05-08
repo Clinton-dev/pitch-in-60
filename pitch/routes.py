@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, abort
 from pitch import app, db, bcrypt
-from pitch.forms import RegistrationForm, LoginForm
+from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm
 from pitch.models import User, Pitch
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -47,8 +47,6 @@ def login():
         if user and bcrypt.check_password_hash(user.password,form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            if not is_safe_url(next):
-                return abort(400)
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash(f'Login unsuccessful check password or email','danger')
@@ -59,7 +57,10 @@ def logout():
     logout_user()
     return redirect('login')
 
-@app.route("/account")
+@app.route("/account", methods=['POST','GET'])
 @login_required
 def account():
-    return render_template("account.html", title="user account")
+    form = UpdateUserForm()
+    # img_file = {{url_for('static',filename='profile-pics/'+ current_user.image_file)}}
+    img_file = url_for('static', filename='profile-pics/' + current_user.image_file)
+    return render_template("account.html", title="user account", image_file=img_file, form=form)
