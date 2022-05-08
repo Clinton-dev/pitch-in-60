@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from pitch import app, db, bcrypt
-from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm
+from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm, PitchForm
 from pitch.models import User, Pitch
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -97,7 +97,14 @@ def account():
 
     return render_template("account.html", title="user account", image_file=img_file, form=form)
 
-@app.route("/pitch/new")
+@app.route("/pitch/new", methods=['POST','GET'])
 @login_required
 def new_pitch():
-    return render_template("create_pitch.html", title="New pitch")
+    form = PitchForm()
+    if form.validate_on_submit():
+        pitch = Pitch(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(pitch)
+        db.session.commit()
+        flash("Pitch was successfully created", "success")
+        return redirect(url_for('index'))
+    return render_template("create_pitch.html", title="New pitch", form = form, legend="Create a pitch")
