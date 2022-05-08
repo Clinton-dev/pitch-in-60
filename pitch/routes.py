@@ -1,3 +1,6 @@
+import os
+import secrets
+from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from pitch import app, db, bcrypt
 from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm
@@ -57,11 +60,30 @@ def logout():
     logout_user()
     return redirect('login')
 
+#
+def save_picture(form_picture):
+    random_hex =  secrets.token_hex(7)
+    f_name, f_ext = os.path.splitext(form_picture.filename)
+    pic_file_name = random_hex + f_ext
+    pic_path = os.path.join(app.root_path, 'static/profile-pics', pic_file_name)
+
+    output_size = (130, 130)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(pic_path)
+    return pic_file_name
+
+
+
 @app.route("/account", methods=['POST','GET'])
 @login_required
 def account():
     form = UpdateUserForm()
     if form.validate_on_submit():
+        if form.image.data:
+            picture_file = save_picture(form.image.data)
+            current_user.image_file = picture_file
+
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
