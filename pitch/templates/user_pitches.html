@@ -1,13 +1,18 @@
 {% extends "layout.html" %}
 
 {% block content %}
+    <h3 class="mb-2">Pitches by: {{user.username}} ({{pitches.total}})</h3>
     {% for pitch in pitches.items %}
         <article class="media content-section">
           <div class="media-body">
-            <div class="article-metadata">
+            <div class="article-metadata row justify-content-start">
+              <div class="col-2">
                 <img class="rounded-circle article-img mb-2" src="{{ url_for('static', filename='profile-pics/' + pitch.author.image_file) }}" alt="{{pitch.author.username}} profile image">
-                <a class="mr-2" href="{{url_for('user_pitches',username=pitch.author.username)}}">By: {{ pitch.author.username }}</a>
+              </div>
+              <div class="col-6">
+                <p class="mr-2">By: {{ pitch.author.username }}</p>
                 <small class="text-muted">Pitched on: {{ pitch.date_posted.strftime('%Y-%m-%d') }}</small>
+              </div>
             </div>
             <h2><a class="article-title" href="{{url_for('pitch', pitch_id=pitch.id)}}">{{ pitch.title}}</a></h2>
             <p class="article-content">{{ pitch.content }}</p>
@@ -19,9 +24,9 @@
         {% for page_no in pitches.iter_pages(left_edge=1,right_edge=1, left_current=1,right_current=2)%}
             {% if page_no %}
               {% if pitches.page == page_no %}
-                <li class="page-item active"><a class="page-link" href="{{url_for('index', page=page_no)}}">{{page_no}}</a></li>
+                <li class="page-item active"><a class="page-link" href="{{url_for('user_pitches', page=page_no, username=user.username)}}">{{page_no}}</a></li>
               {% else %}
-                <li class="page-item"><a class="page-link" href="{{url_for('index', page=page_no)}}">{{page_no}}</a></li>
+                <li class="page-item"><a class="page-link" href="{{url_for('user_pitches', page=page_no, username=user.username)}}">{{page_no}}</a></li>
               {% endif %}
             {% else%}
               <li class="page-item disabled">

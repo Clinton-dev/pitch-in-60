@@ -131,3 +131,12 @@ def delete_pitch(pitch_id):
     db.session.commit()
     flash('Pitch was deleted successfully','success')
     return redirect(url_for('index'))
+
+@app.route("/user/<string:username>")
+def user_pitches(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    pitches = Pitch.query.filter_by(author=user)\
+        .order_by(Pitch.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template("user_pitches.html", pitches=pitches, user=user)
