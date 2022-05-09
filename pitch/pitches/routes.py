@@ -16,7 +16,7 @@ def new_pitch():
         db.session.add(pitch)
         db.session.commit()
         flash("Pitch was successfully created", "success")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template("create_pitch.html", title="New pitch", form = form, legend="Create a pitch")
 
 @pitches.route("/pitch/<int:pitch_id>")
@@ -36,7 +36,7 @@ def update_pitch(pitch_id):
         pitch.content = form.content.data
         db.session.commit()
         flash('Pitch updated successfully', 'success')
-        return redirect(url_for('pitch', pitch_id=pitch.id))
+        return redirect(url_for('pitches.pitch', pitch_id=pitch.id))
     elif request.method == 'GET':
         form.title.data = pitch.title
         form.content.data = pitch.content
@@ -51,5 +51,5 @@ def delete_pitch(pitch_id):
     db.session.delete(pitch)
     db.session.commit()
     flash('Pitch was deleted successfully','success')
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 

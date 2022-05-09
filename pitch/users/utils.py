@@ -7,7 +7,7 @@ from pitch import app, mail
 
 def send_welcome_email(user):
     msg = Message('Welcome to pitch-in-60', sender="lastcam00@gmail.com", recipients=[user.email])
-    msg.body = f"""We have just seen you have signed up for our application and want to welcome you. Please enjoy the list of all your  favourite pitches. Please login at: {url_for('login', _external=True)}
+    msg.body = f"""We have just seen you have signed up for our application and want to welcome you. Please enjoy the list of all your  favourite pitches. Please login at: {url_for('users.login', _external=True)}
     """
     mail.send(msg)
 

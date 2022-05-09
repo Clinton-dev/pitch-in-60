@@ -11,8 +11,8 @@
             <p class="article-content">{{ pitch.content }}</p>
           </div>
           {% if current_user == pitch.author %}
-            <a class="btn btn-success" href="{{url_for('update_pitch',pitch_id=pitch.id)}}" role="button">Update pitch</a>
-            <a class="btn btn-danger" href="{{url_for('delete_pitch',pitch_id=pitch.id)}}" role="button">Delete</a>
+            <a class="btn btn-success" href="{{url_for('pitches.update_pitch',pitch_id=pitch.id)}}" role="button">Update pitch</a>
+            <a class="btn btn-danger" href="{{url_for('pitches.delete_pitch',pitch_id=pitch.id)}}" role="button">Delete</a>
           {% endif %}
         </article>
 {% endblock content%}

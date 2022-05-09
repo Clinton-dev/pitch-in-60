@@ -2,8 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from pitch import db, bcrypt
 from pitch.models import User, Pitch
-from pitch.users.forms import (RegistrationForm, LoginForm, UpdateUserForm,
-                                   RequestResetForm, ResetPasswordForm)
+from pitch.users.forms import (RegistrationForm, LoginForm, UpdateUserForm)
 from pitch.users.utils import save_picture, send_welcome_email
 
 users = Blueprint('users', __name__)
@@ -11,7 +10,7 @@ users = Blueprint('users', __name__)
 @users.route("/signup", methods=['POST','GET'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -21,21 +20,21 @@ def signup():
         query_user = User.query.filter_by(username=form.username.data).first()
         # send_welcome_email(query_user) will fix this later
         flash(f'A welcome email was sent to your email account you can proceed to login','success')
-        return redirect(url_for('login'))
+        return redirect(url_for('users.login'))
 
     return render_template("signup.html", title="Signup", form=form)
 
 @users.route("/login", methods=['POST','GET'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password,form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
+            return redirect(next_page) if next_page else redirect(url_for('main.index'))
         else:
             flash(f'Login unsuccessful check password or email','danger')
     return render_template("login.html", title="Login", form=form)
@@ -58,7 +57,7 @@ def account():
         current_user.email = form.email.data
         db.session.commit()
         flash('Account details successfully updated', 'success')
-        return redirect(url_for('account'))
+        return redirect(url_for('users.account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
