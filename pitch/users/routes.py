@@ -4,7 +4,7 @@ from pitch import db, bcrypt
 from pitch.models import User, Pitch
 from pitch.users.forms import (RegistrationForm, LoginForm, UpdateUserForm,
                                    RequestResetForm, ResetPasswordForm)
-from pitch.users.utils import save_picture, send_reset_email
+from pitch.users.utils import save_picture, send_welcome_email
 
 users = Blueprint('users', __name__)
 
@@ -62,7 +62,6 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    # img_file = {{url_for('static',filename='profile-pics/'+ current_user.image_file)}}
     img_file = url_for('static', filename='profile-pics/' + current_user.image_file)
 
     return render_template("account.html", title="user account", image_file=img_file, form=form)
