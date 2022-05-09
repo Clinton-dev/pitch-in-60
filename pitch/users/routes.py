@@ -38,3 +38,34 @@ def login():
 def logout():
     logout_user()
     return redirect('login')
+
+@users.route("/account", methods=['POST','GET'])
+@login_required
+def account():
+    form = UpdateUserForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            picture_file = save_picture(form.image.data)
+            current_user.image_file = picture_file
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Account details successfully updated', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    # img_file = {{url_for('static',filename='profile-pics/'+ current_user.image_file)}}
+    img_file = url_for('static', filename='profile-pics/' + current_user.image_file)
+
+    return render_template("account.html", title="user account", image_file=img_file, form=form)
+
+@users.route("/user/<string:username>")
+def user_pitches(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    pitches = Pitch.query.filter_by(author=user)\
+        .order_by(Pitch.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template("user_pitches.html", pitches=pitches, user=user)
