@@ -1,9 +1,9 @@
 import os
 import secrets
 from PIL import Image
-from flask import url_for
+from flask import url_for, current_app
 from flask_mail import Message
-from pitch import app, mail
+from pitch import mail
 
 def send_welcome_email(user):
     msg = Message('Welcome to pitch-in-60', sender="lastcam00@gmail.com", recipients=[user.email])
@@ -18,7 +18,7 @@ def save_picture(form_picture):
     random_hex =  secrets.token_hex(7)
     f_name, f_ext = os.path.splitext(form_picture.filename)
     pic_file_name = random_hex + f_ext
-    pic_path = os.path.join(app.root_path, 'static/profile-pics', pic_file_name)
+    pic_path = os.path.join(current_app.root_path, 'static/profile-pics', pic_file_name)
 
     output_size = (127, 127)
     i = Image.open(form_picture)
