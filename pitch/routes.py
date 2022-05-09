@@ -2,10 +2,11 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from pitch import app, db, bcrypt
+from pitch import app, db, bcrypt, mail
 from pitch.forms import RegistrationForm, LoginForm, UpdateUserForm, PitchForm
 from pitch.models import User, Pitch
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 
 @app.route("/")
@@ -13,6 +14,12 @@ def index():
     page = request.args.get('page', 1, type=int)
     pitches = Pitch.query.order_by(Pitch.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template("home.html", pitches=pitches, title="Pitch in a min")
+
+def send_welcome_email(user):
+    msg = Message('Welcome to pitch-in-60', sender="lastcam00@gmail.com", recipients=[user.email])
+    msg.body = f"""We have just seen you have signed up for our application and want to welcome you. Please enjoy the list of all your  favourite pitches. Please login at: {url_for('login', _external=True)}
+    """
+    mail.send(msg)
 
 @app.route("/signup", methods=['POST','GET'])
 def signup():
@@ -24,7 +31,9 @@ def signup():
         user = User(username=form.username.data, password=hashed_pass, email=form.email.data)
         db.session.add(user)
         db.session.commit()
-        flash(f'Your account is ready you can proceed to login','success')
+        query_user = User.query.filter_by(username=form.username.data).first()
+        send_welcome_email(query_user)
+        flash(f'A welcome email was sent to your email account you can proceed to login','success')
         return redirect(url_for('login'))
 
     return render_template("signup.html", title="Signup", form=form)
