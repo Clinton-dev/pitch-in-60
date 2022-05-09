@@ -32,7 +32,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         query_user = User.query.filter_by(username=form.username.data).first()
-        send_welcome_email(query_user)
+        # send_welcome_email(query_user) will fix this later
         flash(f'A welcome email was sent to your email account you can proceed to login','success')
         return redirect(url_for('login'))
 
