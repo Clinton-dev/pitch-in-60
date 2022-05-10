@@ -19,6 +19,7 @@ def new_pitch():
         return redirect(url_for('main.index'))
     return render_template("create_pitch.html", title="New pitch", form = form, legend="Create a pitch")
 
+
 @pitches.route("/pitch/<int:pitch_id>")
 def pitch(pitch_id):
     pitch = Pitch.query.get(pitch_id)
